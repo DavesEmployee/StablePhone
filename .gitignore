@@ -21,3 +21,23 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# Python backend ignores
+/stablephone-backend/__pycache__/
+/stablephone-backend/venv/
+/stablephone-backend/*.pyc
+
+# General Python ignores (in case you run at the project root)
+/venv/
+/__pycache__/
+/*.pyc
+
+# VSCode and IDE settings (optional but recommended)
+.vscode/
+.idea/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Optional: log files
+*.log
