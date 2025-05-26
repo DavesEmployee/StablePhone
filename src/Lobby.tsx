@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Avatar from "boring-avatars";
 
-
+import PlayerList from "./PlayerList";
 
 
 const WS_URL = "ws://localhost:8000/ws";
@@ -362,7 +362,7 @@ const Lobby: React.FC = () => {
                                                 />
                                                 <span style={{fontWeight: 600}}>{player}</span>
                                             </td>
-                                            <td style={{textAlign: "right"}}>{score.toFixed(3)}</td>
+                                            <td style={{textAlign: "right"}}>{score}</td>
                                         </tr>
                                     ))}
 
@@ -438,22 +438,7 @@ const Lobby: React.FC = () => {
                 </div>
             )}
             <h3>Players</h3>
-            <ul>
-                {players.map(player => (
-                    <li key={player.name} style={{display: "flex", alignItems: "center", gap: 10, marginBottom: 6}}>
-                        <Avatar
-                            size={22}
-                            name={player.name}
-                            variant="beam"
-                            square={false}
-                            colors={["#6C9", "#FFD166", "#EF476F", "#06D6A0", "#118AB2", "#8338EC", "#FFBE0B"]}
-                        />
-                        <span style={{fontWeight: 600}}>{player.name}</span>
-                        <span style={{marginLeft: 6}}>{player.ready ? "✅" : "⌛"}</span>
-                    </li>
-                ))}
-            </ul>
-
+            <PlayerList players={players} currentName={name} />
         </div>
     );
 };
