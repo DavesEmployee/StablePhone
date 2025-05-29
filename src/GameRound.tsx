@@ -1,5 +1,7 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PlayerList from "./PlayerList";
+
+
 
 type Player = { name: string; ready: boolean };
 
@@ -35,6 +37,21 @@ const GameRound: React.FC<GameRoundProps> = ({
     const isReady = !!players.find(p => p.name === name && p.ready);
 
     const [expandedImage, setExpandedImage] = useState<string | null>(null);
+
+    const [imgTransitioning, setImgTransitioning] = useState(false);
+    const [displayedImage, setDisplayedImage] = useState<string | null>(currentImage);
+
+    // Fade out then update image then fade in
+    useEffect(() => {
+        if (currentImage !== displayedImage) {
+            setImgTransitioning(true);
+            setTimeout(() => {
+                setDisplayedImage(currentImage);
+                setImgTransitioning(false);
+            }, 250); // 250ms fade
+        }
+        // eslint-disable-next-line
+    }, [currentImage]);
 
     return (
         <>
@@ -132,7 +149,7 @@ const GameRound: React.FC<GameRoundProps> = ({
                         }}>
                             Describe the picture you see!
                         </h3>
-                        {currentImage ? (
+                        {displayedImage ? (
                             <div
                                 style={{
                                     // border: "1px solid #ddd",
@@ -144,20 +161,28 @@ const GameRound: React.FC<GameRoundProps> = ({
                                     textAlign: "center",
                                     cursor: "pointer"
                                 }}
-                                onClick={() => setExpandedImage(currentImage)}
+                                onClick={() => setExpandedImage(displayedImage)}
                                 title="Click to expand"
                             >
                                 <img
-                                    src={`data:image/png;base64,${currentImage}`}
+                                    src={`data:image/png;base64,${displayedImage}`}
                                     alt="AI"
+                                    className={`fade-img${imgTransitioning ? " out" : ""}`}
                                     style={{
                                         maxWidth: 256,
                                         maxHeight: 256,
                                         borderRadius: 10,
                                         // border: "1.5px solid #aac",
-                                        transition: "box-shadow 0.18s",
+                                        transition: "box-shadow 0.18s"
                                     }}
                                 />
+                                <div style={{
+                                    fontSize: "0.88em",
+                                    color: "#6e789a",
+                                    marginTop: 6
+                                }}>
+                                    (Click to enlarge)
+                                </div>
                             </div>
                         ) : (
                             <div style={{
@@ -168,8 +193,9 @@ const GameRound: React.FC<GameRoundProps> = ({
                                 Waiting for image...
                             </div>
                         )}
+
                         {!isReady && (
-                        <div style={{
+                        <div className={`fade-inout${isReady ? " hide" : ""}`} style={{
                             display: "flex",
                             alignItems: "stretch",
                             justifyContent: "center",
@@ -210,15 +236,16 @@ const GameRound: React.FC<GameRoundProps> = ({
                         </div>
                         )}
                         {isReady && (
-                            <div style={{textAlign: "center", margin: "24px 0", color: "#28a745", fontWeight: 700, fontSize: "1.08em"}}>
+                            <div className={`fade-inout${!isReady ? " hide" : ""}`} style={{textAlign: "center", margin: "24px 0", color: "#28a745", fontWeight: 700, fontSize: "1.08em"}}>
                                 Waiting for others to finish...
                             </div>
                         )}
-                        <div style={{margin: "10px 0 22px 0"}}>
-                            <PlayerList players={players} currentName={name} />
-                        </div>
+                        
                     </div>
                 )}
+                <div style={{margin: "10px 0 22px 0"}}>
+                    <PlayerList players={players} currentName={name} />
+                </div>
             
             </div>
             {expandedImage && (
