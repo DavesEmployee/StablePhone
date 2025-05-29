@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import PlayerList from "./PlayerList";
 
 type Player = { name: string; ready: boolean };
@@ -34,87 +34,254 @@ const GameRound: React.FC<GameRoundProps> = ({
 }) => {
     const isReady = !!players.find(p => p.name === name && p.ready);
 
+    const [expandedImage, setExpandedImage] = useState<string | null>(null);
+
     return (
-        <div
-            style={{
-                maxWidth: 820,
-                margin: "30px auto 40px auto",
-                background: "#fafdff",
-                borderRadius: 18,
-                boxShadow: "0 4px 32px #d4e4fa55",
-                padding: "36px 30px 44px 30px",
-                minHeight: 450
-            }}
-        >
-            <h2 style={{marginBottom: 0}}>Game - Round {roundNumber}</h2>
-            <div style={{margin: "10px 0 18px 0"}}>
-                <PlayerList players={players} currentName={name} />
-            </div>
+        <>
+            <div
+                className="stable-main-container"
+                style={{
+                        maxWidth: 420,
+                        textAlign: "center",
+                        marginBottom: 18,
+                        fontWeight: 800,
+                        // fontSize: "2.1em",
+                        fontFamily: "'Nunito', sans-serif",
+                        letterSpacing: "-2px",
+                        color: "#fff" // bright white for title
+                    }}
+            >
+                <h2 style={{
+                    marginBottom: 6,
+                    color: "#1d3557",
+                    fontWeight: 800,
+                    // fontSize: "1.85em",
+                    textAlign: "center"
+                }}>
+                    Game - Round {roundNumber}
+                </h2>
+                
 
-            {/* Round 1: Prompt entry */}
-            {roundNumber === 1 && (
-                <div>
-                    <h3>Come up with an exciting first image!</h3>
-                    <input
-                        className="stable-input"
-                        type="text"
-                        placeholder="Write your prompt"
-                        value={prompt}
-                        onChange={e => setPrompt(e.target.value)}
-                        disabled={isReady}
-                        style={{marginRight: 8}}
-                    />
-                    <button
-                        className="stable-btn"
-                        onClick={onSubmitPrompt}
-                        disabled={isReady}
-                    >
-                        Submit
-                    </button>
-                </div>
-            )}
-
-            {/* Rounds 2+ : Image description */}
-            {roundNumber > 1 && assignedChain && (
-                <div>
-                    <h3>Describe the picture you see!</h3>
-                    {currentImage ? (
-                        <div style={{
-                            border: "1px solid #ddd",
-                            padding: 12,
-                            margin: "1em 0",
+                {/* Round 1: Prompt entry */}
+                {roundNumber === 1 && (
+                    <div>
+                        <h3 style={{
+                            marginTop: 12,
+                            marginBottom: 18,
                             textAlign: "center",
-                            borderRadius: 8,
-                            background: "#f7f7fa"
+                            fontWeight: 700,
+                            color: "#1976d2"
                         }}>
-                            <img
-                                src={`data:image/png;base64,${currentImage}`}
-                                alt="AI"
-                                style={{ maxWidth: 256, maxHeight: 256, borderRadius: 7, border: "1px solid #aaa" }}
+                            Come up with an exciting first image!
+                        </h3>
+                        {!isReady && (
+                            <div style={{
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                maxWidth: 340,
+                                margin: "0 auto 18px auto"
+                            }}>
+                                <input
+                                    className="stable-input"
+                                    type="text"
+                                    placeholder="Write your prompt"
+                                    value={prompt}
+                                    onChange={e => setPrompt(e.target.value)}
+                                    disabled={isReady}
+                                    style={{
+                                        borderTopRightRadius: 0,
+                                        borderBottomRightRadius: 0,
+                                        flex: 1,
+                                        marginRight: 0
+                                    }}
+                                    onKeyDown={e => e.key === "Enter" && onSubmitPrompt()}
+                                    maxLength={120}
+                                />
+                                <button
+                                    className="stable-btn"
+                                    style={{
+                                        borderTopLeftRadius: 0,
+                                        borderBottomLeftRadius: 0,
+                                        margin: 0
+                                    }}
+                                    onClick={onSubmitPrompt}
+                                    disabled={isReady}
+                                >
+                                    Submit
+                                </button>
+                            </div>
+                        )}
+                        {isReady && (
+                            <div style={{textAlign: "center", margin: "24px 0", color: "#28a745", fontWeight: 700, fontSize: "1.08em"}}>
+                                Waiting for others to finish...
+                            </div>
+                        )}
+                    </div>
+                )}
+
+                {/* Rounds 2+ : Image description */}
+                {roundNumber > 1 && assignedChain && (
+                    <div>
+                        <h3 style={{
+                            marginTop: 8,
+                            marginBottom: 18,
+                            textAlign: "center",
+                            fontWeight: 700,
+                            color: "#1976d2"
+                        }}>
+                            Describe the picture you see!
+                        </h3>
+                        {currentImage ? (
+                            <div
+                                style={{
+                                    // border: "1px solid #ddd",
+                                    padding: 12,
+                                    // borderRadius: 12,
+                                    // background: "#f7fafd",
+                                    // boxShadow: "0 2px 12px #bbeef933",
+                                    marginBottom: 14,
+                                    textAlign: "center",
+                                    cursor: "pointer"
+                                }}
+                                onClick={() => setExpandedImage(currentImage)}
+                                title="Click to expand"
+                            >
+                                <img
+                                    src={`data:image/png;base64,${currentImage}`}
+                                    alt="AI"
+                                    style={{
+                                        maxWidth: 256,
+                                        maxHeight: 256,
+                                        borderRadius: 10,
+                                        // border: "1.5px solid #aac",
+                                        transition: "box-shadow 0.18s",
+                                    }}
+                                />
+                            </div>
+                        ) : (
+                            <div style={{
+                                margin: "1em 0",
+                                color: "#666",
+                                textAlign: "center"
+                            }}>
+                                Waiting for image...
+                            </div>
+                        )}
+                        {!isReady && (
+                        <div style={{
+                            display: "flex",
+                            alignItems: "stretch",
+                            justifyContent: "center",
+                            maxWidth: 340,
+                            margin: "0 auto 18px auto"
+                        }}>
+                            <input
+                                className="stable-input"
+                                type="text"
+                                placeholder={roundNumber === 1 ? "Write your prompt" : "Your description"}
+                                value={roundNumber === 1 ? prompt : description}
+                                onChange={e => roundNumber === 1 ? setPrompt(e.target.value) : setDescription(e.target.value)}
+                                disabled={isReady}
+                                style={{
+                                    borderTopRightRadius: 0,
+                                    borderBottomRightRadius: 0,
+                                    flex: 1,
+                                    marginRight: 0
+                                }}
+                                onKeyDown={e => e.key === "Enter" && (roundNumber === 1 ? onSubmitPrompt() : onSubmitDescription())}
+                                maxLength={120}
                             />
+                            <button
+                                className="stable-btn"
+                                style={{
+                                    borderTopLeftRadius: 0,
+                                    borderBottomLeftRadius: 0,
+                                    margin: 0,
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center"
+                                }}
+                                onClick={roundNumber === 1 ? onSubmitPrompt : onSubmitDescription}
+                                disabled={isReady}
+                            >
+                                Submit
+                            </button>
                         </div>
-                    ) : (
-                        <div style={{margin: "1em 0", color: "#666"}}>Waiting for image...</div>
-                    )}
-                    <input
-                        className="stable-input"
-                        type="text"
-                        placeholder="Your description"
-                        value={description}
-                        onChange={e => setDescription(e.target.value)}
-                        disabled={isReady}
-                        style={{marginRight: 8}}
-                    />
-                    <button
-                        className="stable-btn"
-                        onClick={onSubmitDescription}
-                        disabled={isReady}
+                        )}
+                        {isReady && (
+                            <div style={{textAlign: "center", margin: "24px 0", color: "#28a745", fontWeight: 700, fontSize: "1.08em"}}>
+                                Waiting for others to finish...
+                            </div>
+                        )}
+                        <div style={{margin: "10px 0 22px 0"}}>
+                            <PlayerList players={players} currentName={name} />
+                        </div>
+                    </div>
+                )}
+            
+            </div>
+            {expandedImage && (
+                <div
+                    style={{
+                        position: "fixed",
+                        left: 0,
+                        top: 0,
+                        width: "100vw",
+                        height: "100vh",
+                        background: "rgba(0,0,0,0.66)",
+                        zIndex: 1000,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                    onClick={() => setExpandedImage(null)}
+                >
+                    <div
+                        style={{
+                            background: "#fff",
+                            padding: 20,
+                            borderRadius: 12,
+                            boxShadow: "0 2px 20px #3338",
+                            maxWidth: "90vw",
+                            maxHeight: "90vh",
+                            textAlign: "center",
+                            position: "relative"
+                        }}
+                        onClick={e => e.stopPropagation()}
                     >
-                        Submit
-                    </button>
+                        <img
+                            src={`data:image/png;base64,${expandedImage}`}
+                            alt="Expanded"
+                            style={{
+                                maxWidth: "80vw",
+                                maxHeight: "70vh",
+                                borderRadius: 8,
+                                border: "1px solid #aaa",
+                                boxShadow: "0 1px 10px #4444"
+                            }}
+                        />
+                        <button
+                            style={{
+                                position: "absolute",
+                                top: 10,
+                                right: 10,
+                                background: "#eee",
+                                border: "none",
+                                borderRadius: 6,
+                                fontWeight: 600,
+                                padding: "4px 12px",
+                                fontSize: "1.1em",
+                                cursor: "pointer"
+                            }}
+                            onClick={() => setExpandedImage(null)}
+                        >
+                            Close
+                        </button>
+                    </div>
                 </div>
             )}
-        </div>
+        </>
     );
 };
 

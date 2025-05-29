@@ -39,20 +39,27 @@
 
 .stable-btn {
     background: linear-gradient(90deg, #83eaf1 0%, #63a4ff 100%);
+    height: 48px;
     color: #244;
-    font-weight: 600;
+    font-weight: 700;
     border: none;
     border-radius: 8px;
-    padding: 10px 30px;
-    font-size: 1.05em;
+    padding: 14px 44px; /* bigger, taller button */
+    font-size: 1.16em;
     box-shadow: 0 2px 8px #c8e6ff88;
     cursor: pointer;
     margin: 12px 8px 0 0;
     transition: transform 0.12s, box-shadow 0.12s;
     outline: none;
-    height: 44px;  /* Or whatever looks best */
-    box-sizing: border-box;
+    min-width: 110px;   /* ensures "Ready" always fits */
 }
+.stable-btn:disabled {
+    opacity: 0.54;
+    background: #f0f3fa;
+    color: #bbb;
+    cursor: not-allowed;
+}
+
 .stable-btn:hover, .stable-btn:focus {
     transform: scale(1.045);
     box-shadow: 0 4px 16px #b4e4ff99;
@@ -86,4 +93,61 @@
 .stable-input:disabled {
     background: #f4f4f4;
     color: #999;
+}
+
+.stable-main-container {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 38px 28px 44px 28px;
+    border-radius: 22px;
+    background: rgba(0, 0, 0, 0.21);
+    box-shadow: 0 8px 32px #6ec6fa35;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    /* border: 1.5px solid #e7eefe; */
+    position: relative;
+    z-index: 2;
+}
+
+.avatar-pop {
+    animation: avatarPopRock 0.65s cubic-bezier(.23,1.24,.39,.97);
+}
+@keyframes avatarPopRock {
+    0%   { transform: scale(1) rotate(0deg);}
+    15%  { transform: scale(1.28) rotate(-14deg);}
+    35%  { transform: scale(1.09) rotate(12deg);}
+    55%  { transform: scale(1.18) rotate(-10deg);}
+    75%  { transform: scale(1.08) rotate(9deg);}
+    100% { transform: scale(1) rotate(0deg);}
+}
+
+.ready-shine {
+    position: relative;
+    overflow: hidden;
+}
+.ready-shine::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -75%;
+    height: 100%;
+    width: 60%;
+    background: linear-gradient(120deg, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.68) 40%, rgba(255,255,255,0.16) 100%);
+    transform: skewX(-22deg);
+    animation: shine-move 2.2s infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+@keyframes shine-move {
+    0% { left: -75%; }
+    40% { left: 120%; }
+    100% { left: 120%; }
+}
+
+.ready-glow {
+    animation: readyGlow 1.1s infinite alternate;
+}
+@keyframes readyGlow {
+    0% { box-shadow: 0 0 0px #4ade80; }
+    100% { box-shadow: 0 0 18px 6px #4ade8080; }
 }
